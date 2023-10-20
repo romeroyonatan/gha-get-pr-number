@@ -1,0 +1,20 @@
+name: 'Get the PR Number'
+description: 'Retrieve the PR number for both pull_request and merge_group events'
+inputs: {} 
+outputs:
+  number:
+    description: 'The extracted PR number'
+    value: ${{ steps.extract_pr.outputs.number }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: extract_pr
+      shell: bash
+      run: |
+        if [[ "${{ github.event_name }}" == "merge_group" ]]; then
+          echo "number=$(echo "${{ github.ref }}" | sed -n 's|.*/pr-\([0-9]*\)-.*|\1|p')" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+        fi
+      
