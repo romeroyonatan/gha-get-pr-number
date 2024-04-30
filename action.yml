@@ -16,5 +16,8 @@ runs:
           echo "number=$(echo "${{ github.ref }}" | sed -n 's|.*/pr-\([0-9]*\)-.*|\1|p')" >> $GITHUB_OUTPUT
         elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
           echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+        else
+          pr_number=$(grep -oP "pull request #\K[0-9]+" $GITHUB_EVENT_PATH | head -n1)
+          echo "number=$pr_number" >> $GITHUB_OUTPUT
         fi
       
